@@ -1,0 +1,2 @@
+module G5BuildpackRakeTasks
+end
