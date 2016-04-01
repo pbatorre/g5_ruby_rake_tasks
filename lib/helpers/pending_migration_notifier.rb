@@ -1,3 +1,6 @@
+require 'slack-notifier'
+require 'redcarpet'
+
 class PendingMigrationNotifier
   attr_accessor :message
 

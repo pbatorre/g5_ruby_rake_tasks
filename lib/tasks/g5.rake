@@ -1,4 +1,4 @@
-require 'helpers/group_mailer'
+require 'helpers/pending_migration_notifier'
 
 namespace 'g5:workflow' do
   desc 'Sends an email to group if there are pending migrations'
