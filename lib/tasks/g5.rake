@@ -19,7 +19,8 @@ namespace 'g5:workflow' do
     pending_migrations = %x{ rake db:migrate:status | grep down }
     pending_migrations.gsub!(/\bdown\b/, '')
 
-    GroupMailer.pending_migrations(pending_migrations).deliver
+    notifier = PendingMigrationNotifier.new(pending_migrations)
+    notifier.send
   end
 
 end
