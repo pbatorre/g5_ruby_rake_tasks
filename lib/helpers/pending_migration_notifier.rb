@@ -1,40 +1,28 @@
-require 'slack-notifier'
-require 'redcarpet'
+require 'httparty'
 
 class PendingMigrationNotifier
   attr_accessor :message
 
   def initialize(pending_migration_list)
     self.message = %Q(
-      **There are pending migrations on #{ENV['HOST']}:**
-      [code]#{pending_migration_list}[/code]
+      *There are pending migrations on #{ENV['HOST']}:*
+      ```#{pending_migration_list}```
     )
   end
-
-  def send
-    case ENV['CHAT_CLIENT']
-    when 'Slack'
-      notify_on_slack
-    when 'Glip'
-      GroupMailer.send(pending_migrations)
-    end
-  end
-
-  private
 
   def notify_on_slack
-    slack_notifier = Slack::Notifier.new(
+    response = HTTParty.post(
       ENV['SLACK_WEBHOOK_URL'],
-      channel: ENV['SLACK_CHANNEL'],
-      username: ENV['SLACK_USERNAME']
+      :headers => {
+        'Content-Type' => 'application/json'
+      },
+      :body => {
+        :channel => ENV['SLACK_CHANNEL'],
+        :username => 'webhookbot',
+        :text => self.message
+      }.to_json
     )
-
-    slack_notifier.ping formatted_slack_message
-  end
-
-  def formatted_slack_message
-    markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
-    markdown.render self.message
+    puts response
   end
 
 end

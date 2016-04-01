@@ -20,7 +20,7 @@ namespace 'g5:workflow' do
     pending_migrations.gsub!(/\bdown\b/, '')
 
     notifier = PendingMigrationNotifier.new(pending_migrations)
-    notifier.send
+    notifier.notify_on_slack
   end
 
 end
