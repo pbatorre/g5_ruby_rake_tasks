@@ -10,9 +10,28 @@ class PendingMigrationNotifier
 
   def send
     case ENV['CHAT_CLIENT']
+    when 'Slack'
+      notify_on_slack
     when 'Glip'
       GroupMailer.send(pending_migrations)
     end
+  end
+
+  private
+
+  def notify_on_slack
+    slack_notifier = Slack::Notifier.new(
+      ENV['SLACK_WEBHOOK_URL'],
+      channel: ENV['SLACK_CHANNEL'],
+      username: ENV['SLACK_USERNAME']
+    )
+
+    slack_notifier.ping formatted_slack_message
+  end
+
+  def formatted_slack_message
+    markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
+    markdown.render self.message
   end
 
 end
